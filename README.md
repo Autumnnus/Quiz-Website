@@ -1,29 +1,29 @@
 # Modern Quiz Platform
 
-Birden fazla kategori ve dil desteği sunan, dinamik ve interaktif bir bilgi yarışması uygulaması.
+A dynamic and interactive quiz application with multi-category and multi-language support.
 
-## ✨ Özellikler
+## ✨ Features
 
-- **Çok Dilli Yapı:** Türkçe ve İngilizce dil desteği.
-- **Kategoriler:** Matematik, Tarih, Coğrafya ve Karışık soru setleri.
-- **Süre Yönetimi:** Sorular için geri sayım sayacı ve görsel süre çizgisi.
-- **Skor Sistemi:** Doğru cevap sayısına göre dinamik sonuç ekranı.
-- **Responsive Tasarım:** Tüm cihazlarla uyumlu modern arayüz.
+- **Multi-language Support:** Available in both English and Turkish.
+- **Categories:** Diverse question sets including Mathematics, History, Geography, and Mixed.
+- **Time Management:** Countdown timer for each question and a visual progress line.
+- **Score System:** Dynamic results screen based on correct answer counts.
+- **Responsive Design:** Modern interface compatible with all devices.
 
-## 🚀 Teknolojiler
+## 🚀 Technologies
 
 - Vanilla JavaScript (ES6+)
 - Bootstrap 5 & Custom CSS
 - HTML5
 - Google Fonts & FontAwesome
 
-## 🛠️ Kurulum
+## 🛠️ Installation
 
-Proje dosyalarını indirdikten sonra `index.html` dosyasını tarayıcınızda açmanız yeterlidir.
+Simply download the project files and open `index.html` in your browser.
 
-## 📂 Dosya Yapısı
+## 📂 File Structure
 
-- `quiz.js`: Quiz mantığı ve state yönetimi.
-- `soru.js`: Soru bankası ve dil verileri.
-- `ui.js`: Arayüz elementlerinin yönetimi.
-- `script.js`: Event listenerlar ve başlangıç ayarları.
+- `quiz.js`: Quiz logic and state management.
+- `soru.js`: Question bank and language data.
+- `ui.js`: Interface element management.
+- `script.js`: Event listeners and initial settings.
