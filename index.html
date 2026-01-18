@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
@@ -15,99 +15,81 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Montserrat:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
-    <title>Quiz</title>
+    <title>The Master Quiz</title>
   </head>
   <body>
-    <div class="card menu_bar" style="width: 30rem">
+    <div class="background-decor"></div>
+
+    <div class="card menu_bar">
       <div class="card-body">
-        <h5 class="card-title">Quiz App</h5>
-        <h6 class="card-subtitle mb-2 text-muted">
-          Pick a language / Bir dil Seçiniz
-        </h6>
-        <div class="languages">
-          <button
-            id="english"
-            class="btn btn-warning btn-lg language"
-            onClick="languageSelect(event)"
-          >
-            English
-          </button>
-          <button
-            id="turkish"
-            class="btn btn-warning btn-lg language"
-            onClick="languageSelect(event)"
-          >
-            Türkçe
-          </button>
+        <h1 class="main-title">Modern Quiz</h1>
+        <div class="selection-section">
+          <p class="section-label">Language / Dil</p>
+          <div class="languages">
+            <button id="english" class="btn-custom">English</button>
+            <button id="turkish" class="btn-custom">Türkçe</button>
+          </div>
         </div>
-        <h6 class="card-subtitle mb-2 text-muted">
-          Pick a class / Bir ders Seçiniz
-        </h6>
-        <div class="classes">
-          <button
-            id="math"
-            class="btn btn-warning btn-lg math class"
-            onClick="classSelect(event)"
-          >
-            Matematik
-          </button>
-          <button
-            id="history"
-            class="btn btn-warning btn-lg history class"
-            onClick="classSelect(event)"
-          >
-            Tarih
-          </button>
-          <button
-            id="geo"
-            class="btn btn-warning btn-lg geography class"
-            onClick="classSelect(event)"
-          >
-            Coğrafya
-          </button>
-          <button
-            id="mix"
-            class="btn btn-warning btn-lg mixed class"
-            onClick="classSelect(event)"
-          >
-            Karışık
-          </button>
+
+        <div class="selection-section">
+          <p class="section-label">Category / Kategori</p>
+          <div class="classes">
+            <button id="math" class="btn-custom math">Matematik</button>
+            <button id="history" class="btn-custom history">Tarih</button>
+            <button id="geo" class="btn-custom geography">Coğrafya</button>
+            <button id="mix" class="btn-custom mixed">Karışık</button>
+          </div>
         </div>
+
         <div class="btn_start btn_quiz_disabled">
-          <button class="btn btn-warning btn-lg btn_quiz_start">
-            Start Quiz
+          <button class="btn-primary-custom btn_quiz_start">
+            Start Challenge
           </button>
         </div>
       </div>
     </div>
 
     <div class="card quiz_box">
-      <header class="card-header">
-        <div class="title">Quiz App</div>
+      <header>
+        <div class="progress-info">
+          <div class="question_index"></div>
+        </div>
         <div class="timer">
-          <div class="time_text">Kalan Süre:</div>
-          <div class="time_second">10</div>
+          <span class="time_text">Süre</span>
+          <span class="time_second">10</span>
         </div>
         <div class="time_line"></div>
       </header>
-      <section class="card-body">
+      <section class="question-container">
         <div class="question_text"></div>
         <div class="option_list"></div>
       </section>
-      <footer class="card-footer">
-        <div class="question_index"></div>
-        <button class="btn btn-primary btn-sm next_btn">Sonraki Soru</button>
+      <footer>
+        <button class="btn-next-custom next_btn">
+          Sonraki Soru <i class="fas fa-arrow-right"></i>
+        </button>
       </footer>
     </div>
+
     <div class="card score_box">
-      <div class="icon"><i class="fas fa-crown"></i></div>
+      <div class="score-header">
+        <div class="icon"><i class="fas fa-crown"></i></div>
+        <h2>Quiz Tamamlandı</h2>
+      </div>
       <div class="score_text"></div>
-      <div class="buttons">
-        <button class="btn btn-primary btn_replay">Tekrar Başlat</button>
-        <button class="btn btn-primary btn_quit">Testi Bitir</button>
+      <div class="score-buttons">
+        <button class="btn-custom btn_replay">Tekrar Başlat</button>
+        <button class="btn-custom btn_quit">Bitir</button>
       </div>
     </div>
+
     <script src="quiz.js"></script>
     <script src="soru.js"></script>
     <script src="ui.js"></script>

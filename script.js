@@ -1,162 +1,187 @@
-const quiz = new Quiz(sorular);
+const quiz = new Quiz();
 const ui = new UI();
 
-//Quiz Start Butonu
-ui.btn_start.addEventListener("click", function () {
-  ui.quiz_box.classList.add("active");
-  ui.soruGoster(quiz.soruGetir());
-  startTimerLine();
-  startTimer(10);
+let timer;
+let timerLine;
+
+// Initialize
+document.addEventListener("DOMContentLoaded", () => {
+  setupEventListeners();
+});
+
+function setupEventListeners() {
+  // Language Selection
+  document.querySelector(".languages").addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-custom");
+    if (!btn) return;
+
+    document
+      .querySelectorAll(".languages .btn-custom")
+      .forEach((b) => b.classList.remove("language_selected"));
+    btn.classList.add("language_selected");
+
+    quiz.selectedLanguage = btn.id === "turkish" ? "tr" : "en";
+    ui.setLanguage(quiz.selectedLanguage);
+    checkQuizReadiness();
+  });
+
+  // Category Selection
+  document.querySelector(".classes").addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-custom");
+    if (!btn) return;
+
+    document
+      .querySelectorAll(".classes .btn-custom")
+      .forEach((b) => b.classList.remove("class_selected"));
+    btn.classList.add("class_selected");
+
+    quiz.selectedCategory = btn.id;
+    checkQuizReadiness();
+  });
+
+  // Start Quiz
+  ui.btn_start.addEventListener("click", () => {
+    if (!quiz.selectedCategory) return;
+
+    quiz.setQuestions(QuizDatabase[quiz.selectedCategory]);
+    ui.menu_bar.style.display = "none";
+    ui.quiz_box.classList.add("active");
+
+    showNextQuestion();
+  });
+
+  // Option Selected (Event Delegation)
+  ui.option_list.addEventListener("click", (e) => {
+    const option = e.target.closest(".option");
+    if (!option || option.classList.contains("disabled")) return;
+
+    handleOptionSelection(option);
+  });
+
+  // Next Question
+  ui.btn_next.addEventListener("click", () => {
+    quiz.nextSoru();
+    if (quiz.isFinished()) {
+      showScore();
+    } else {
+      showNextQuestion();
+    }
+  });
+
+  // Replay
+  document.querySelector(".btn_replay").addEventListener("click", () => {
+    quiz.reset();
+    ui.score_box.classList.remove("active");
+    ui.quiz_box.classList.add("active");
+    showNextQuestion();
+  });
+
+  // Quit
+  document.querySelector(".btn_quit").addEventListener("click", () => {
+    window.location.reload();
+  });
+}
+
+function checkQuizReadiness() {
+  ui.toggleStartButton(!!quiz.selectedLanguage && !!quiz.selectedCategory);
+}
+
+function showNextQuestion() {
+  const soru = quiz.soruGetir();
+  ui.soruGoster(soru, quiz.selectedLanguage);
   ui.soruSayisiniGoster(quiz.soruIndex + 1, quiz.sorular.length);
   ui.btn_next.classList.remove("show");
-});
 
-//Sonraki soru
-ui.btn_next.addEventListener("click", function () {
-  if (quiz.sorular.length != quiz.soruIndex + 1) {
-    document.querySelector(".quiz_box").classList.add("active");
-    quiz.soruIndex += 1;
-    clearInterval(counter);
-    clearInterval(counterline);
-    startTimer(10);
-    startTimerLine();
-    ui.soruGoster(quiz.soruGetir());
-    ui.soruSayisiniGoster(quiz.soruIndex + 1, quiz.sorular.length);
-    ui.btn_next.classList.remove("show");
-    ui.time_text.textContent = "Kalan Süre";
-  } else {
-    clearInterval(counterline);
-    clearInterval(counter);
-    ui.score_box.classList.add("active");
-    ui.quiz_box.classList.remove("active");
-    ui.skoruGoster(quiz.sorular.length, quiz.dogruCevapSayisi);
-  }
-});
-
-//Language
-let languageControl;
-function languageSelect(event) {
-  let selected_language = event.target;
-  selected_language.classList.add("language_selected");
-
-  if (
-    ui.turkish.classList.contains("language_selected") &&
-    ui.english.classList.contains("language_selected")
-  ) {
-    ui.english.classList.remove("language_selected");
-    languageControl = 0;
-    ui.turkish.classList.remove("language_selected");
-  }
-  if (ui.turkish.classList.contains("language_selected")) {
-    languageControl = 1;
-  } else if (ui.english.classList.contains("language_selected")) {
-    languageControl = 2;
-  }
-  languageSelected(languageControl);
+  resetTimers();
+  startTimers(10);
 }
 
-//Çeviri
-function languageSelected(language) {
-  if (language == 1) {
-    document.querySelector("#math").innerText = "Matematik";
-    document.querySelector("#history").innerText = "Tarih";
-    document.querySelector("#geo").innerText = "Coğrafya";
-    document.querySelector("#mix").innerText = "Karışık";
-    document.querySelector(".btn_quiz_start").innerText = "Quiz'e Başla";
-  } else if (language == 2) {
-    document.querySelector("#math").innerText = "Math";
-    document.querySelector("#history").innerText = "History";
-    document.querySelector("#geo").innerText = "Geography";
-    document.querySelector("#mix").innerText = "Mixed";
-    document.querySelector(".btn_quiz_start").innerText = "Start Quiz";
-  }
-}
+function handleOptionSelection(option) {
+  stopTimers();
+  const selectedKey = option.getAttribute("data-key");
+  const soru = quiz.soruGetir();
+  const isCorrect = soru.cevabiKontrolEt(selectedKey);
 
-//Dersler
-let classControl = false;
-function classSelect(event) {
-  let selected_class = event.target;
-  selected_class.classList.add("class_selected");
-  for (let i = 0; i < ui.classes.children.length; i++) {
-    if (ui.classes.children[i].classList.contains("class_selected")) {
-    } else {
-      ui.classes.children[i].classList.add("disabled");
-      classControl = true;
-    }
-  }
-  if ((languageControl == 1 || languageControl == 2) && classControl == true) {
-    ui.btn_start.classList.remove("btn_quiz_disabled");
-  }
-}
-
-//Şıklar
-function optionSelected(option) {
-  clearInterval(counterline);
-  clearInterval(counter);
-  let cevap = option.querySelector("span b").textContent;
-  let soru = quiz.soruGetir();
-  let degiskengetir = document.getElementById("correct_option");
-  if (soru.cevabiKontrolEt(cevap)) {
-    quiz.dogruCevapSayisi += 1;
+  if (isCorrect) {
+    quiz.dogruCevapSayisi++;
     option.classList.add("correct");
     option.insertAdjacentHTML("beforeend", ui.correctIcon);
   } else {
     option.classList.add("incorrect");
     option.insertAdjacentHTML("beforeend", ui.incorrectIcon);
-    degiskengetir.classList.add("correct");
-    degiskengetir.insertAdjacentHTML("beforeend", ui.correctIcon);
+    // Show correct answer
+    const correctOption = Array.from(ui.option_list.children).find((opt) =>
+      soru.cevabiKontrolEt(opt.getAttribute("data-key")),
+    );
+    if (correctOption) {
+      correctOption.classList.add("correct");
+      correctOption.insertAdjacentHTML("beforeend", ui.correctIcon);
+    }
   }
 
-  for (let i = 0; i < ui.option_list.children.length; i++) {
-    ui.option_list.children[i].classList.add("disabled");
-  }
+  Array.from(ui.option_list.children).forEach((opt) =>
+    opt.classList.add("disabled"),
+  );
   ui.btn_next.classList.add("show");
 }
 
-//Bitiş Butonları
-ui.btn_quit.addEventListener("click", function () {
-  window.location.reload();
-});
-ui.btn_replay.addEventListener("click", function () {
-  quiz.soruIndex = 0;
-  quiz.dogruCevapSayisi = 0;
-  ui.btn_start.click();
-  ui.score_box.classList.remove("active");
-});
-
-//Süre Sayacı
-let counter;
-function startTimer(time) {
-  counter = setInterval(timer, 1000);
-
-  function timer() {
-    ui.time_second.textContent = time;
-    time--;
-    if (time < 0) {
-      clearInterval(counter);
-      ui.time_text.textContent = "Süre Bitti";
-      let cevap = quiz.soruGetir().dogruCevap;
-      for (let option of ui.option_list.children) {
-        if (option.querySelector("span b").textContent == cevap) {
-          option.classList.add("correct");
-          option.insertAdjacentHTML("beforeend", ui.correctIcon);
-        }
-        option.classList.add("disabled");
-      }
-      ui.btn_next.classList.add("show");
-    }
-  }
+function showScore() {
+  stopTimers();
+  ui.quiz_box.classList.remove("active");
+  ui.score_box.classList.add("active");
+  ui.skoruGoster(
+    quiz.sorular.length,
+    quiz.dogruCevapSayisi,
+    quiz.selectedLanguage,
+  );
 }
-//Çubuk
-let counterline;
-function startTimerLine() {
-  let line_width = 0;
-  counterline = setInterval(timer, 20);
-  function timer() {
-    line_width += 1;
-    ui.time_line.style.width = line_width + "px";
-    if (line_width > 549) {
-      clearInterval(counterline);
+
+// Timer Logic
+function startTimers(time) {
+  let timeLeft = time;
+  ui.time_second.textContent = timeLeft;
+  ui.time_text.textContent = quiz.selectedLanguage === "tr" ? "Süre" : "Time";
+
+  timer = setInterval(() => {
+    timeLeft--;
+    ui.time_second.textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      handleTimeUp();
     }
-  }
+  }, 1000);
+
+  let lineWidth = 0;
+  timerLine = setInterval(() => {
+    lineWidth += 0.2; // roughly 50fps for 10 seconds
+    ui.time_line.style.width = lineWidth + "%";
+    if (lineWidth >= 100) clearInterval(timerLine);
+  }, 20);
+}
+
+function stopTimers() {
+  clearInterval(timer);
+  clearInterval(timerLine);
+}
+
+function resetTimers() {
+  stopTimers();
+  ui.time_line.style.width = "0%";
+}
+
+function handleTimeUp() {
+  stopTimers();
+  ui.time_text.textContent =
+    quiz.selectedLanguage === "tr" ? "Süre Bitti" : "Time Up";
+
+  const correctKey = quiz.soruGetir().dogruCevap;
+  Array.from(ui.option_list.children).forEach((opt) => {
+    if (opt.getAttribute("data-key") === correctKey) {
+      opt.classList.add("correct");
+      opt.insertAdjacentHTML("beforeend", ui.correctIcon);
+    }
+    opt.classList.add("disabled");
+  });
+
+  ui.btn_next.classList.add("show");
 }
